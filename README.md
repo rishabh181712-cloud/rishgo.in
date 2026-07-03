@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RishGO - The Ultimate Arcade & Store</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #e0f2fe 0%, #bae6fd 100%);
+            background-attachment: fixed;
+            color: #1e293b;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .navbar {
+            background-color: #0284c7;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #0369a1;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+        .logo-img {
+            max-width: 100px;
+            height: auto;
+            mix-blend-mode: multiply;
+        }
+        .search-container {
+            flex-grow: 1;
+            margin: 0 15px;
+            display: flex;
+        }
+        .search-input {
+            width: 100%;
+            padding: 10px 14px;
+            font-size: 13px;
+            border: 1px solid #0284c7;
+            background-color: #ffffff;
+            color: #1e293b;
+            border-right: none;
+            border-radius: 6px 0 0 6px;
+            outline: none;
+        }
+        .search-btn {
+            background-color: #0369a1;
+            color: #ffffff;
+            border: none;
+            padding: 0 18px;
+            font-size: 13px;
+            border-radius: 0 6px 6px 0;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .app-body {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 95px;
+            background-color: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(5px);
+            overflow-y: auto;
+            border-right: 1px solid rgba(2, 132, 199, 0.2);
+            height: 100%;
+        }
+        .sidebar-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 4px;
+            text-align: center;
+            font-size: 11px;
+            color: #0369a1;
+            font-weight: bold;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(2, 132, 199, 0.1);
+        }
+        .sidebar-item.active {
+            background-color: rgba(2, 132, 199, 0.1);
+            color: #0284c7;
+            border-left: 4px solid #0284c7;
+        }
+        .sidebar-icon-box {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 5px;
+            font-size: 18px;
+            border: 1px solid rgba(2, 132, 199, 0.3);
+        }
+
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 18px;
+            padding-bottom: 80px;
+        }
+
+        .app-page {
+            display: none;
+        }
+        .app-page.active-page {
+            display: block;
+        }
+
+        .content-section {
+            margin-bottom: 25px;
+        }
+        .section-header {
+            font-size: 14px;
+            font-weight: bold;
+            color: #0369a1;
+            margin-bottom: 14px;
+            border-left: 4px solid #0284c7;
+            padding-left: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sub-category-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        .grid-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            border: 1px solid rgba(2, 132, 199, 0.2);
+            padding: 12px 4px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(5px);
+        }
+        .item-avatar {
+            width: 58px;
+            height: 58px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 6px;
+            border: 1px solid rgba(2, 132, 199, 0.3);
+        }
+        .item-name {
+            font-size: 11px;
+            color: #1e293b;
+            font-weight: 500;
+        }
+
+        .product-list-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .product-card {
+            background-color: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(2, 132, 199, 0.2);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            backdrop-filter: blur(5px);
+        }
+        .prod-image { font-size: 40px; margin-bottom: 8px; }
+        .prod-title { font-size: 13px; font-weight: bold; color: #1e293b; margin-bottom: 4px; }
+        .prod-price { color: #0284c7; font-size: 14px; font-weight: bold; margin-bottom: 8px; }
+        .buy-now-btn {
+            background-color: #0284c7;
+            color: #ffffff;
+            border: none;
+            padding: 7px 12px;
+            font-weight: bold;
+            border-radius: 5px;
+            font-size: 11px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .game-hub-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+        .game-panel-card {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid #bae6fd;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .game-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #0369a1;
+            margin-bottom: 8px;
+        }
+        
+        .ttt-board {
+            display: grid;
+            grid-template-columns: repeat(3, 50px);
+            grid-gap: 5px;
+            justify-content: center;
+            margin: 10px auto;
+        }
+        .ttt-cell {
+            width: 50px;
+            height: 50px;
+            background-color: #f0f9ff;
+            border: 1px solid #0284c7;
+            border-radius: 6px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #0284c7;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .game-btn-action {
+            background-color: #0284c7;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 2px;
+        }
+        .game-box-input {
+            width: 70px;
+            padding: 5px;
+            background: #ffffff;
+            border: 1px solid #0284c7;
+            color: #1e293b;
+            border-radius: 4px;
+            text-align: center;
+            outline: none;
+        }
+        .game-out-msg {
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 6px;
+            color: #0369a1;
+        }
+
+        .account-box { max-width: 400px; margin: 0 auto; }
+        .login-card {
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(2, 132, 199, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .login-card h3 { margin-bottom: 12px; font-size: 15px; color: #0369a1;}
+        .login-input {
+            width: 100%;
+            padding: 11px;
+            margin-bottom: 12px;
+            border: 1px solid #0284c7;
+            background-color: #ffffff;
+            color: #1e293b;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+        }
+        .login-submit-btn {
+            background-color: #0284c7;
+            color: #ffffff;
+            border: none;
+            width: 100%;
+            padding: 11px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .account-options-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px;}
+        .account-opt-item {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #1e293b;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            border: 1px solid rgba(2, 132, 199, 0.1);
+            border-radius: 6px;
+        }
+        .account-opt-item span { color: #0284c7; }
+        .account-opt-item:hover { background-color: #e0f2fe; }
+
+        .details-display-panel {
+            background-color: #ffffff;
+            border: 2px dashed #0284c7;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+        }
+        .details-display-panel h4 { color: #0369a1; margin-bottom: 8px; font-size: 14px; }
+        .details-display-panel p { font-size: 13px; color: #475569; }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background-color: #0284c7;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #0369a1;
+            z-index: 100;
+        }
+        .nav-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #bae6fd;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 20%;
+            height: 100%;
+            justify-content: center;
+        }
+        .nav-link.active-nav {
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+        .nav-icon { font-size: 18px; margin-bottom: 2px; }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <img class="logo-img" src="logo.png" alt="RishGO Logo">
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search products, games and options...">
+            <button class="search-btn">Search</button>
+        </div>
+    </div>
+
+    <div class="app-body">
+        
+        <div class="sidebar" id="appSidebar" style="display:none;">
+            <div class="sidebar-item active" onclick="switchCategory('bihar-specials', this)">
+                <div class="sidebar-icon-box">🍯</div>Bihar Food
+            </div>
+            <div class="sidebar-item" onclick="switchCategory('jharkhand-specials', this)">
+                <div class="sidebar-icon-box">🌾</div>Jharkhand
+            </div>
+            <div class="sidebar-item" onclick="switchCategory('grocery', this)">
+                <div class="sidebar-icon-box">🛒</div>Grocery
+            </div>
+            <div class="sidebar-item" onclick="switchCategory('fashion', this)">
+                <div class="sidebar-icon-box">👕</div>Fashion
+            </div>
+            <div class="sidebar-item" onclick="switchCategory('mobiles', this)">
+                <div class="sidebar-icon-box">📱</div>Mobiles
+            </div>
+        </div>
+
+        <div class="main-content">
+            
+            <div id="page-home" class="app-page active-page">
+                <div class="content-section">
+                    <div class="section-header">🔥 Hot Deals Marketplace</div>
+                    <div class="product-list-grid">
+                        <div class="product-card">
+                            <div class="prod-image">🍿</div>
+                            <div class="prod-title">Mithila Makhana 500g</div>
+                            <div class="prod-price">₹299</div>
+                            <button class="buy-now-btn" onclick="alert('Added to Cart!')">Buy Now</button>
+                        </div>
+                        <div class="product-card">
+                            <div class="prod-image">👟</div>
+                            <div class="prod-title">Premium Sneakers</div>
+                            <div class="prod-price">₹1,499</div>
+                            <button class="buy-now-btn" onclick="alert('Added to Cart!')">Buy Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-play" class="app-page">
+                <div class="content-section">
+                    <div class="section-header">🎮 Play Zone Hub (All Games Inside)</div>
+                    <div class="game-hub-grid">
+                        
+                        <div class="game-panel-card">
+                            <div class="game-title">❌ X and O Arena ⭕</div>
+                            <div class="ttt-board">
+                                <div class="ttt-cell" onclick="playTTT(this, 0)"></div>
+                                <div class="ttt-cell" onclick="playTTT(this, 1)"></div>
+                                <div class="ttt-cell" onclick="playTTT(this, 2)"></div>
+                                <div class="ttt-cell" onclick="playTTT(this, 3)"></div>
+                                <div class="ttt-cell" onclick="playTTT(this, 4)"></div>
+                                <div class="ttt-cell" onclick="playTTT(this, 5)"></div>
+                                <div class="ttt-cell" onclick="playTTT(this, 6)"></div>
+                                <div class="ttt-cell" onclick="playTTT(this, 7)"></div>
+                                <div class="ttt-cell" onclick="playTTT(this, 8)"></div>
+                            </div>
+                            <button class="game-btn-action" onclick="resetTTT()">Reset Match</button>
+                            <div id="tttOut" class="game-out-msg">Turn: Player X</div>
+                        </div>
+
+                        <div class="game-panel-card">
+                            <div class="game-title">1. Lucky Node Matrix (1-10)</div>
+                            <input type="number" id="g1Input" class="game-box-input" min="1" max="10">
+                            <button class="game-btn-action" onclick="runGame1()">Guess</button>
+                            <div id="g1Out" class="game-out-msg"></div>
+                        </div>
+
+                        <div class="game-panel-card">
+                            <div class="game-title">2. Rock Paper Scissors</div>
+                            <button class="game-btn-action" onclick="runGame2('✊')">Rock</button>
+                            <button class="game-btn-action" onclick="runGame2('✋')">Paper</button>
+                            <button class="game-btn-action" onclick="runGame2('✌️')">Scissors</button>
+                            <div id="g2Out" class="game-out-msg"></div>
+                        </div>
+
+                        <div class="game-panel-card">
+                            <div class="game-title">3. Roll The Dice</div>
+                            <button class="game-btn-action" onclick="runGame3()">Roll Dice 🎲</button>
+                            <div id="g3Out" class="game-out-msg"></div>
+                        </div>
+
+                        <div class="game-panel-card">
+                            <div class="game-title">4. Coin Flip Engine</div>
+                            <button class="game-btn-action" onclick="runGame4('Heads')">Heads</button>
+                            <button class="game-btn-action" onclick="runGame4('Tails')">Tails</button>
+                            <div id="g4Out" class="game-out-msg"></div>
+                        </div>
+
+                        <div class="game-panel-card">
+                            <div class="game-title">5. Tapping Timer Rush (5 Seconds)</div>
+                            <button class="game-btn-action" onclick="runGame5()">CLICK ME FAST!</button>
+                            <div id="g5Out" class="game-out-msg">Clicks: 0</div>
+                        </div>
+
+                        <div class="game-panel-card">
+                            <div class="game-title">6. Cyber Reflex Tester</div>
+                            <button class="game-btn-action" id="g6Btn" onclick="runGame6()">Start Signal</button>
+                            <div id="g6Out" class="game-out-msg"></div>
+                        </div>
+
+                        <div class="game-panel-card">
+                            <div class="game-title">7. Unscramble the Word: "O G H S I R"</div>
+                            <input type="text" id="g7Input" class="game-box-input" style="width:120px;" placeholder="Answer...">
+                            <button class="game-btn-action" onclick="runGame7()">Verify</button>
+                            <div id="g7Out" class="game-out-msg"></div>
+                        </div>
+
+                        <div class="game-panel-card">
+                            <div class="game-title">8. Quick Arithmetic: 7 x 8 = ?</div>
+                            <input type="number" id="g8Input" class="game-box-input">
+                            <button class="game-btn-action" onclick="runGame8()">Submit</button>
+                            <div id="g8Out" class="game-out-msg"></div>
+                        </div>
+
+                        <div class="game-panel-card">
+                            <div class="game-title">9. Spin Lucky Color Matrix</div>
+                            <button class="game-btn-action" onclick="runGame9('🔴 Red')">Red</button>
+                            <button class="game-btn-action" onclick="runGame9('🔵 Blue')">Blue</button>
+                            <button class="game-btn-action" onclick="runGame9('🟢 Green')">Green</button>
+                            <div id="g9Out" class="game-out-msg"></div>
+                        </div>
+
+                        <div class="game-panel-card">
+                            <div class="game-title">10. Sequential Memory Tracker</div>
+                            <button class="game-btn-action" onclick="runGame10(1)">Card A</button>
+                            <button class="game-btn-action" onclick="runGame10(2)">Card B</button>
+                            <div id="g10Out" class="game-out-msg">Match the order!</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-categories" class="app-page">
+                <div class="content-section cat-sub-page" id="bihar-specials">
+                    <div class="section-header">Taste of Bihar Specials</div>
+                    <div class="sub-category-grid">
+                        <div class="grid-item"><div class="item-avatar">🍿</div><div class="item-name">Mithila Makhana</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-account" class="app-page">
+                <div class="account-box">
+                    <div class="login-card" id="loginFormCard">
+                        <h3>Secure Account Terminal</h3>
+                        <input type="text" id="loginContactInput" class="login-input" placeholder="Enter Contact / Email Account ID">
+                        <div id="otpInputBlock" style="display: none;">
+                            <p style="font-size:12px; color:#1e293b; margin-bottom:8px;" id="otpHint"></p>
+                            <input type="text" id="userOtpVerification" class="login-input" placeholder="Enter 4-Digit Security Key">
+                        </div>
+                        <button class="login-submit-btn" id="loginActionBtn" onclick="handleOtpFlow()">SEND SECURE OTP</button>
+                    </div>
+                    
+                    <div class="account-options-list">
+                        <div class="account-opt-item" onclick="openAccountTab('orders')">📦 My Orders <span>❯</span></div>
+                        <div class="account-opt-item" onclick="openAccountTab('cards')">💳 Saved Cards & Wallets <span>❯</span></div>
+                        <div class="account-opt-item" onclick="openAccountTab('addresses')">📍 Saved Addresses <span>❯</span></div>
+                        <div class="account-opt-item" onclick="openAccountTab('settings')">⚙️ Profile Settings <span>❯</span></div>
+                    </div>
+
+                    <div id="accountDetailsDisplay" class="details-display-panel">
+                        <h4 id="panelTitle">Section Title</h4>
+                        <p id="panelContent">Details content goes here...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-cart" class="app-page">
+                <div style="text-align: center; padding: 40px 20px;">
+                    <div style="font-size:50px; margin-bottom:10px; color:#0284c7;">🛒</div>
+                    <h3 style="color:#1e293b;">Your Cart is Currently Empty</h3>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <button class="nav-link active-nav" onclick="changeAppTab('page-home', this)"><div class="nav-icon">🏠</div>Home</button>
+        <button class="nav-link" onclick="changeAppTab('page-play', this)"><div class="nav-icon">▶️</div>Play</button>
+        <button class="nav-link" onclick="changeAppTab('page-categories', this)"><div class="nav-icon">⣿</div>Categories</button>
+        <button class="nav-link" onclick="changeAppTab('page-account', this)"><div class="nav-icon">👤</div>Account</button>
+        <button class="nav-link" onclick="changeAppTab('page-cart', this)"><div class="nav-icon">🛒</div>Cart</button>
+    </div>
+
+    <script>
+        let generatedOtp = null;
+        let loginStep = 1;
+
+        function changeAppTab(pageId, element) {
+            document.querySelectorAll('.bottom-nav .nav-link').forEach(btn => btn.classList.remove('active-nav'));
+            element.classList.add('active-nav');
+            document.querySelectorAll('.app-page').forEach(page => page.classList.remove('active-page'));
+            document.getElementById(pageId).classList.add('active-page');
+            document.getElementById('appSidebar').style.display = (pageId === 'page-categories') ? 'block' : 'none';
+        }
+
+        function openAccountTab(type) {
+            const panel = document.getElementById('accountDetailsDisplay');
+            const title = document.getElementById('panelTitle');
+            const content = document.getElementById('panelContent');
+            
+            panel.style.display = "block";
+
+            if(type === 'orders') {
+                title.innerText = "📦 Your System Orders";
+                content.innerText = "No current active orders found. Start shopping from the hot deals homepage!";
+            } else if(type === 'cards') {
+                title.innerText = "💳 Saved Cards & Pay Wallets";
+                content.innerText = "RishGO Wallet Balance: ₹0.00. No credit/debit cards link interfaces attached.";
+            } else if(type === 'addresses') {
+                title.innerText = "📍 Registered Saved Addresses";
+                content.innerText = "Primary Node: No delivery address updated yet. Please update profile coordinates.";
+            } else if(type === 'settings') {
+                title.innerText = "⚙️ Core Profile Systems Settings";
+                content.innerText = "Account Verification Status: Sandbox Mode Active. Security Engine logs cleared.";
+            }
+        }
+
+        // Tic Tac Toe Code
+        let currentTTTPlayer = 'X';
+        let tttState = ["", "", "", "", "", "", "", "", ""];
+        let tttActive = true;
+        const winPatterns = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]];
+
+        function playTTT(cell, index) {
+            if (tttState[index] !== "" || !tttActive) return;
+            tttState[index] = currentTTTPlayer;
+            cell.innerText = currentTTTPlayer;
+            let won = false;
+            for(let pattern of winPatterns) {
+                if(tttState[pattern[0]] !== "" && tttState[pattern[0]] === tttState[pattern[1]] && tttState[pattern[1]] === tttState[pattern[2]]) { won = true; break; }
+            }
+            if (won) { document.getElementById('tttOut').innerText = `🎉 Player ${currentTTTPlayer} Wins!`; tttActive = false; return; }
+            if (!tttState.includes("")) { document.getElementById('tttOut').innerText = "🤝 Match Draw!"; tttActive = false; return; }
+            currentTTTPlayer = currentTTTPlayer === 'X' ? 'O' : 'X';
+            document.getElementById('tttOut').innerText = `Turn: Player ${currentTTTPlayer}`;
+        }
+
+        function resetTTT() {
+            currentTTTPlayer = 'X'; tttState = ["", "", "", "", "", "", "", "", ""]; tttActive = true;
+            document.getElementById('tttOut').innerText = "Turn: Player X";
+            document.querySelectorAll('.ttt-cell').forEach(cell => cell.innerText = "");
+        }
+
+        // --- MINI GAMES FUNCTIONS ---
+        function runGame1() {
+            let val = parseInt(document.getElementById('g1Input').value);
+            let ans = Math.floor(Math.random() * 10) + 1;
+            document.getElementById('g1Out').innerText = (val === ans) ? "🎉 Winner!" : `❌ Target was: ${ans}`;
+        }
+        function runGame2(user) {
+            let choices = ['✊', '✋', '✌️'];
+            let bot = choices[Math.floor(Math.random() * 3)];
+            let res = (user === bot) ? "Tie Game!" : "Match Concluded!";
+            document.getElementById('g2Out').innerText = `You: ${user} | Bot: ${bot} -> ${res}`;
+        }
+        function runGame3() {
+            document.getElementById('g3Out').innerText = `Dice landed on: 🎲 ${Math.floor(Math.random() * 6) + 1}`;
+        }
+        function runGame4(side) {
+            let flip = Math.random() < 0.5 ? 'Heads' : 'Tails';
+            document.getElementById('g4Out').innerText = (side === flip) ? `🎉 Won! Result: ${flip}` : `❌ Lost! Result: ${flip}`;
+        }
+        let clicks = 0, g5Active = false;
+        function runGame5() {
+            if(!g5Active) {
+                g5Active = true; clicks = 1;
+                setTimeout(() => { document.getElementById('g5Out').innerText = `Complete! CPS score: ${clicks / 5}`; g5Active = false; }, 5000);
+            } else { clicks++; document.getElementById('g5Out').innerText = `Taps: ${clicks}`; }
+        }
+        function runGame6() {
+            let out = document.getElementById('g6Out'); out.innerText = "Wait for flash...";
+            setTimeout(() => { out.style.color = "#16a34a"; out.innerText = "CLICK NOW!"; }, Math.random() * 2000 + 1000);
+        }
+        function runGame7() {
+            let ans = document.getElementById('g7Input').value.trim().toUpperCase();
+            document.getElementById('g7Out').innerText = (ans === "RISHGO") ? "✓ Correct Word Solved!" : "✕ Mismatch sequence.";
+        }
+        function runGame8() {
+            let ans = parseInt(document.getElementById('g8Input').value);
+            document.getElementById('g8Out').innerText = (ans === 56) ? "✓ Correct Answer!" : "✕ Logic Math Grid failed.";
+        }
+        function runGame9(col) {
+            let colors = ['🔴 Red', '🔵 Blue', '🟢 Green'];
+            let win = colors[Math.floor(Math.random() * 3)];
+            document.getElementById('g9Out').innerText = (col === win) ? `🎉 Matched: ${win}` : `❌ Failed: Matrix was ${win}`;
+        }
+        let seq = [];
+        function runGame10(num) {
+            seq.push(num); document.getElementById('g10Out').innerText = `Input registered. Pattern length: ${seq.length}`;
+            if(seq.length >= 3) seq = [];
+        }
+
+        function handleOtpFlow() {
+            const contact = document.getElementById('loginContactInput').value.trim();
+            if (loginStep === 1) {
+                if(!contact) { alert("Invalid Account Entry ID!"); return; }
+                generatedOtp = Math.floor(1000 + Math.random() * 9000);
+                document.getElementById('otpHint').innerText = `[Verification Key]: ${generatedOtp}`;
+                document.getElementById('otpInputBlock').style.display = 'block';
+                document.getElementById('loginActionBtn').innerText = "VERIFY INTERFACE HANDSHAKE";
+                loginStep = 2;
+            } else {
+                let key = document.getElementById('userOtpVerification').value.trim();
+                if(key === String(generatedOtp)) {
+                    document.getElementById('loginFormCard').innerHTML = `<h3 style="color:#16a34a">✓ Verified Secure Session for ${contact}</h3>`;
+                } else { alert("Key Mismatch!"); }
+            }
+        }
+    </script>
+</body>
+</html>
